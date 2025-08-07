@@ -1,0 +1,163 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Team Members</h1>
+        <div>
+          <%= link_to "Invite User", invite_users_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+      
+      <% if @users.any? %>
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @users.each do |user| %>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar-circle bg-primary text-white me-3">
+                            <%= (user.first_name&.first || user.email.first).upcase %>
+                          </div>
+                          <div>
+                            <div class="fw-bold">
+                              <%= [user.first_name, user.last_name].compact.join(' ').presence || 'Name not set' %>
+                            </div>
+                            <% if user == current_user %>
+                              <small class="text-muted">(You)</small>
+                            <% end %>
+                          </div>
+                        </div>
+                      </td>
+                      <td><%= user.email %></td>
+                      <td>
+                        <span class="badge bg-<%= user.admin? ? 'primary' : 'secondary' %>">
+                          <%= user.role.titleize %>
+                        </span>
+                      </td>
+                      <td>
+                        <% if user.invitation_sent_at && !user.invitation_accepted_at %>
+                          <span class="badge bg-warning">Invitation Sent</span>
+                        <% elsif user.confirmed_at %>
+                          <span class="badge bg-success">Active</span>
+                        <% else %>
+                          <span class="badge bg-info">Pending Confirmation</span>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% if user.invitation_accepted_at %>
+                          <%= user.invitation_accepted_at.strftime("%b %d, %Y") %>
+                        <% elsif user.created_at %>
+                          <%= user.created_at.strftime("%b %d, %Y") %>
+                        <% else %>
+                          -
+                        <% end %>
+                      </td>
+                      <td>
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Actions
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><%= link_to "View Profile", user, class: "dropdown-item" %></li>
+                            <% if current_user.admin? || user == current_user %>
+                              <li><%= link_to "Edit", edit_user_path(user), class: "dropdown-item" %></li>
+                            <% end %>
+                            <% if current_user.admin? && user != current_user %>
+                              <li><hr class="dropdown-divider"></li>
+                              <% if user.invitation_sent_at && !user.invitation_accepted_at %>
+                                <li>
+                                  <%= link_to "Resend Invitation", send_invitation_users_path(user_id: user.id), 
+                                      method: :post, class: "dropdown-item" %>
+                                </li>
+                              <% end %>
+                              <li>
+                                <%= link_to "Remove User", user, method: :delete, 
+                                    confirm: "Are you sure you want to remove this user?", 
+                                    class: "dropdown-item text-danger" %>
+                              </li>
+                            <% end %>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team Statistics -->
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <div class="card text-center">
+              <div class="card-body">
+                <h3 class="text-primary"><%= @users.count %></h3>
+                <p class="mb-0">Total Members</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center">
+              <div class="card-body">
+                <h3 class="text-success"><%= @users.where(role: 'admin').count %></h3>
+                <p class="mb-0">Administrators</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center">
+              <div class="card-body">
+                <h3 class="text-info"><%= @users.where(role: 'employee').count %></h3>
+                <p class="mb-0">Employees</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center">
+              <div class="card-body">
+                <h3 class="text-warning">
+                  <%= @users.where.not(invitation_sent_at: nil).where(invitation_accepted_at: nil).count %>
+                </h3>
+                <p class="mb-0">Pending Invites</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      <% else %>
+        <div class="text-center py-5">
+          <i class="bi bi-people fs-1 text-muted"></i>
+          <h4 class="mt-3 text-muted">No team members yet</h4>
+          <p class="text-muted">Invite your first team member to get started</p>
+          <%= link_to "Invite User", invite_users_path, class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+</style>

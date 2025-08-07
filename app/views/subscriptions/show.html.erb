@@ -1,0 +1,191 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="h3 mb-4">Billing & Subscription</h1>
+      
+      <!-- Current Plan -->
+      <div class="row mb-5">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Current Plan</h5>
+              <span class="badge bg-<%= @subscription.subscription_status == 'active' ? 'success' : 'warning' %> fs-6">
+                <%= @subscription.subscription_status&.titleize || 'Free' %>
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h4><%= @subscription.subscription_plan&.titleize || 'Free Plan' %></h4>
+                  <% if @subscription.subscription_plan && @plans[@subscription.subscription_plan] %>
+                    <p class="text-muted">
+                      $<%= @plans[@subscription.subscription_plan][:price] %>/month
+                    </p>
+                    
+                    <ul class="list-unstyled">
+                      <% @plans[@subscription.subscription_plan][:features].each do |feature| %>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= feature %></li>
+                      <% end %>
+                    </ul>
+                  <% else %>
+                    <p class="text-muted">Basic features included</p>
+                    <ul class="list-unstyled">
+                      <li><i class="bi bi-check-circle-fill text-success me-2"></i>1 project</li>
+                      <li><i class="bi bi-check-circle-fill text-success me-2"></i>Basic file uploads</li>
+                      <li><i class="bi bi-check-circle-fill text-success me-2"></i>Email support</li>
+                    </ul>
+                  <% end %>
+                </div>
+                <div class="col-md-6">
+                  <h6>Usage Statistics</h6>
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                      <span>Projects Used:</span>
+                      <span>
+                        <%= current_organization.projects.count %>
+                        <% if current_organization.project_limit %>
+                          / <%= current_organization.project_limit %>
+                        <% else %>
+                          / Unlimited
+                        <% end %>
+                      </span>
+                    </div>
+                    <% if current_organization.project_limit %>
+                      <div class="progress mt-1">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: <%= (current_organization.projects.count.to_f / current_organization.project_limit * 100).round(1) %>%">
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                      <span>Team Members:</span>
+                      <span><%= current_organization.users.count %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-3">
+                <% if @subscription.subscription_status == 'active' %>
+                  <%= form_with url: manage_billing_subscription_path, method: :post, local: true do |form| %>
+                    <%= form.submit "Manage Billing", class: "btn btn-outline-primary" %>
+                  <% end %>
+                <% else %>
+                  <span class="text-muted">Ready to upgrade? Choose a plan below.</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <% unless @subscription.subscription_status == 'active' %>
+                  <a href="#pricing-plans" class="btn btn-primary">Upgrade Plan</a>
+                <% end %>
+                
+                <% if @subscription.subscription_status == 'active' %>
+                  <%= form_with url: manage_billing_subscription_path, method: :post, local: true do |form| %>
+                    <%= form.submit "Download Invoices", class: "btn btn-outline-secondary" %>
+                  <% end %>
+                <% end %>
+                
+                <%= link_to "Organization Settings", organization_path, class: "btn btn-outline-info" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Available Plans -->
+      <div id="pricing-plans">
+        <h4 class="mb-4">Available Plans</h4>
+        <div class="row">
+          <% @plans.each do |plan_key, plan| %>
+            <div class="col-md-4 mb-4">
+              <div class="card h-100 <%= 'border-primary' if plan[:popular] %>">
+                <% if plan[:popular] %>
+                  <div class="card-header bg-primary text-white text-center">
+                    <small>Most Popular</small>
+                  </div>
+                <% end %>
+                
+                <div class="card-body text-center">
+                  <h5 class="card-title"><%= plan[:name] %></h5>
+                  <div class="mb-3">
+                    <span class="h2">$<%= plan[:price] %></span>
+                    <span class="text-muted">/month</span>
+                  </div>
+                  
+                  <ul class="list-unstyled">
+                    <% plan[:features].each do |feature| %>
+                      <li class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <%= feature %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+                
+                <div class="card-footer text-center">
+                  <% if @subscription.subscription_plan == plan_key %>
+                    <button class="btn btn-success" disabled>Current Plan</button>
+                  <% else %>
+                    <%= form_with url: create_checkout_session_subscription_path, method: :post, local: true do |form| %>
+                      <%= form.hidden_field :plan, value: plan_key %>
+                      <%= form.submit "Choose #{plan[:name]}", 
+                          class: "btn #{plan[:popular] ? 'btn-primary' : 'btn-outline-primary'}" %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Billing Information -->
+      <% if @subscription.subscription_status == 'active' %>
+        <div class="row mt-5">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Billing Information</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>Billing Status:</strong> 
+                      <span class="badge bg-success">Active</span>
+                    </p>
+                    <p><strong>Plan:</strong> <%= @subscription.subscription_plan.titleize %></p>
+                  </div>
+                  <div class="col-md-6">
+                    <% if @subscription.stripe_customer_id %>
+                      <p><strong>Customer ID:</strong> <%= @subscription.stripe_customer_id %></p>
+                    <% end %>
+                    <p><strong>Organization:</strong> <%= @subscription.name %></p>
+                  </div>
+                </div>
+                
+                <div class="mt-3">
+                  <%= form_with url: manage_billing_subscription_path, method: :post, local: true do |form| %>
+                    <%= form.submit "Manage Billing Details", class: "btn btn-outline-primary" %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

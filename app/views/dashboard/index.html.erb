@@ -1,0 +1,225 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Dashboard</h1>
+        <div>
+          <span class="badge bg-<%= current_organization.subscription_status == 'active' ? 'success' : 'warning' %> me-2">
+            <%= current_organization.subscription_plan&.titleize || 'Free' %> Plan
+          </span>
+          <% if current_user.admin? %>
+            <%= link_to "New Project", new_project_path, class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Stats Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card bg-primary text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="card-title">Total Projects</h6>
+                  <h2><%= @project_count %></h2>
+                </div>
+                <div class="align-self-center">
+                  <i class="bi bi-folder-fill fs-1"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="card bg-success text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="card-title">Active Projects</h6>
+                  <h2><%= @active_projects_count %></h2>
+                </div>
+                <div class="align-self-center">
+                  <i class="bi bi-play-circle-fill fs-1"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="card bg-warning text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="card-title">Completed Projects</h6>
+                  <h2><%= @completed_projects_count %></h2>
+                </div>
+                <div class="align-self-center">
+                  <i class="bi bi-check-circle-fill fs-1"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="card bg-info text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h6 class="card-title">Team Members</h6>
+                  <h2><%= @user_count %></h2>
+                </div>
+                <div class="align-self-center">
+                  <i class="bi bi-people-fill fs-1"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Projects -->
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Recent Projects</h5>
+              <%= link_to "View All", projects_path, class: "btn btn-sm btn-outline-primary" %>
+            </div>
+            <div class="card-body">
+              <% if @recent_projects.any? %>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Project Name</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% @recent_projects.each do |project| %>
+                        <tr>
+                          <td>
+                            <%= link_to project.name, project, class: "text-decoration-none" %>
+                            <% if project.description.present? %>
+                              <br><small class="text-muted"><%= truncate(project.description, length: 60) %></small>
+                            <% end %>
+                          </td>
+                          <td>
+                            <span class="badge bg-<%= project.status == 'active' ? 'success' : project.status == 'completed' ? 'primary' : 'secondary' %>">
+                              <%= project.status.titleize %>
+                            </span>
+                          </td>
+                          <td>
+                            <% if project.due_date %>
+                              <%= project.due_date.strftime("%b %d, %Y") %>
+                              <% if project.due_date < Date.current && project.status != 'completed' %>
+                                <br><small class="text-danger">Overdue</small>
+                              <% end %>
+                            <% else %>
+                              <span class="text-muted">No due date</span>
+                            <% end %>
+                          </td>
+                          <td>
+                            <%= link_to "View", project, class: "btn btn-sm btn-outline-primary" %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              <% else %>
+                <div class="text-center py-4">
+                  <i class="bi bi-folder-x fs-1 text-muted"></i>
+                  <h5 class="mt-3 text-muted">No projects yet</h5>
+                  <p class="text-muted">Get started by creating your first project</p>
+                  <% if current_user.admin? %>
+                    <%= link_to "Create Project", new_project_path, class: "btn btn-primary" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Actions & Info -->
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <% if current_user.admin? %>
+                  <%= link_to new_project_path, class: "btn btn-primary" do %>
+                    <i class="bi bi-plus-circle me-2"></i>New Project
+                  <% end %>
+                  <%= link_to users_path, class: "btn btn-outline-primary" do %>
+                    <i class="bi bi-people me-2"></i>Manage Users
+                  <% end %>
+                  <%= link_to subscription_path, class: "btn btn-outline-secondary" do %>
+                    <i class="bi bi-credit-card me-2"></i>Billing & Plans
+                  <% end %>
+                <% end %>
+                <%= link_to projects_path, class: "btn btn-outline-info" do %>
+                  <i class="bi bi-folder me-2"></i>All Projects
+                <% end %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Organization Info -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Organization</h5>
+            </div>
+            <div class="card-body">
+              <h6><%= current_organization.name %></h6>
+              <% if current_organization.description.present? %>
+                <p class="text-muted small"><%= current_organization.description %></p>
+              <% end %>
+              
+              <hr>
+              
+              <div class="small">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>Plan:</span>
+                  <span class="fw-bold"><%= current_organization.subscription_plan&.titleize || 'Free' %></span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                  <span>Status:</span>
+                  <span class="badge bg-<%= current_organization.subscription_status == 'active' ? 'success' : 'warning' %>">
+                    <%= current_organization.subscription_status&.titleize || 'Free' %>
+                  </span>
+                </div>
+                
+                <% if current_organization.subscription_plan.present? %>
+                  <div class="d-flex justify-content-between">
+                    <span>Project Limit:</span>
+                    <span>
+                      <%= @project_count %>
+                      <% if current_organization.project_limit %>
+                        / <%= current_organization.project_limit %>
+                      <% else %>
+                        / Unlimited
+                      <% end %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+              
+              <% if current_user.admin? %>
+                <hr>
+                <%= link_to "Organization Settings", organization_path, class: "btn btn-sm btn-outline-secondary w-100" %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

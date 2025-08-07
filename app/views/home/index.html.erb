@@ -1,0 +1,138 @@
+<<!-- Hero Section -->
+<section class="hero-section hero-bg" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1726&q=80');">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h1 class="display-4 fw-bold mb-4">Welcome to the Project Management Application!</h1>
+          <p class="lead mb-5">You'll love managing your project with our SaaS application. Please take a look at our great plans</p>
+          <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <%= link_to "Get Started Free", new_user_registration_path, class: "btn btn-light btn-lg px-5" %>
+            <%= link_to "View Pricing", "#pricing", class: "btn btn-outline-light btn-lg px-5" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center mb-5">
+        <h2 class="display-5 fw-bold">Why Choose Our Platform?</h2>
+        <p class="lead text-muted">Everything you need to manage your projects efficiently</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="text-center">
+          <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="fas fa-cloud-upload-alt text-white fa-2x"></i>
+          </div>
+          <h5>Unlimited Uploads</h5>
+          <p class="text-muted">Upload and store unlimited files with our secure cloud storage</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center">
+          <div class="bg-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="fas fa-mobile-alt text-white fa-2x"></i>
+          </div>
+          <h5>Responsive Design</h5>
+          <p class="text-muted">Access your projects from any device with our mobile-friendly interface</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center">
+          <div class="bg-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="fas fa-globe text-white fa-2x"></i>
+          </div>
+          <h5>Access Anywhere</h5>
+          <p class="text-muted">Work from anywhere with our cloud-based platform</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center mb-5">
+        <h2 class="display-5 fw-bold">Choose Your Plan</h2>
+        <p class="lead text-muted">Start free and upgrade as you grow</p>
+      </div>
+    </div>
+    
+    <div class="row justify-content-center">
+      <% @plans.each_with_index do |plan, index| %>
+        <div class="col-lg-5 col-md-6 mb-4">
+          <div class="card pricing-card <%= 'premium-card' if plan[:popular] %> h-100">
+            <% if plan[:popular] %>
+              <div class="premium-badge">Most Popular</div>
+            <% end %>
+            
+            <div class="pricing-header text-center">
+              <h3 class="fw-bold"><%= plan[:name] %></h3>
+              <div class="price">
+                <span class="price-currency"><%= plan[:currency] %></span><%= plan[:price] %>
+                <span class="price-period"><%= plan[:period] %></span>
+              </div>
+            </div>
+            
+            <div class="pricing-body">
+              <ul class="feature-list">
+                <% plan[:features].each do |feature| %>
+                  <li><i class="fas fa-check"></i> <%= feature %></li>
+                <% end %>
+              </ul>
+              
+              <div class="text-center">
+                <%= link_to plan[:button_text], new_user_registration_path(plan: plan[:name].downcase.gsub(' ', '_')), 
+                    class: "btn #{plan[:button_class]} btn-pricing w-100" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h3 class="fw-bold mb-2">Ready to get started?</h3>
+        <p class="mb-0">Join thousands of users who trust our platform for their project management needs.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <%= link_to "Start Free Trial", new_user_registration_path, 
+            class: "btn btn-light btn-lg fw-bold" %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <p class="mb-0">&copy; 2025 SaasProjectApp. All rights reserved.</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <div class="social-links">
+          <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

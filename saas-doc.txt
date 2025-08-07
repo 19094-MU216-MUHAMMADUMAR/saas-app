@@ -1,0 +1,201 @@
+Here is a consolidated prompt for your Claude 4 model, with the change to use SQLite3 instead of PostgreSQL:
+
+---
+
+**Requirements Document for Project Management SaaS Application**
+
+**Overview**
+This document outlines the requirements for a **Project Management SaaS application** that allows organizations to manage projects, employees, and subscriptions via different plans (free and paid). The application will provide a multi-tenancy system with organizations as tenants. The project will be developed using **Ruby on Rails 8** with the **ActasTenant** gem for multi-tenancy, **Devise** gem for user authentication, **Bootstrap** for styling via CDN, and **Stripe** for payment handling.
+
+---
+
+### 1. Functional Requirements
+
+**1.1 Multi-Tenancy Support**
+
+* **Tenants**: Organizations are the primary tenants in the application.
+* **Users**: Users belong to organizations, and each user is associated with a specific organization.
+* **ActasTenant Gem**: The application will use the **ActasTenant** gem for managing multi-tenancy.
+
+**1.2 User Authentication and Authorization**
+
+* **Devise Gem**: User authentication will be handled by the **Devise** gem.
+* **Devise Views**: The Devise views will be styled using **Bootstrap** to maintain a consistent design.
+* **User Roles**: There will be two main types of users:
+
+  * **Admin**: Admin users have the ability to manage the organization, invite users, and manage projects.
+  * **Employee**: Employees can view and participate in projects and manage their own profiles.
+
+**1.3 Project Management**
+
+* **Project Creation**: Admin users can create and manage projects within their organization.
+* **CRUD Operations**: Both admin and employee users can perform CRUD (Create, Read, Update, Delete) operations on projects within their organization.
+* **File Uploads**: Users can upload files and images to projects.
+* **Employee Profiles**: Employees can edit their profiles, and admin users can manage employee details.
+
+**1.4 Subscription Plans and Payment**
+
+* **Plans**: The application will offer **Free** and **Premium** plans.
+
+  * **Free Plan**: Can have only one project and an unlimited number of employees.
+  * **Premium Plan**: Can have multiple projects and an unlimited number of employees.
+* **Plan Changes**: Users can switch between free and premium plans. Upon upgrading to a premium plan, users should have access to additional features like multiple projects.
+* **Stripe Integration**: Stripe will be used to handle payments and subscriptions for the premium plan.
+
+  * Integration with Stripe should include:
+
+    * Payment processing
+    * Handling of subscription lifecycle (upgrade, downgrade, cancel).
+
+**1.5 Invitations and Email Notifications**
+
+* **Invitations**: Admin users can invite other users to the app via email.
+
+  * Invitation emails will contain a confirmation link that allows invited users to register for the application.
+  * **MailCatcher Gem**: The MailCatcher gem will be used to simulate email sending for development and testing purposes.
+
+**1.6 Organization and Employees Management**
+
+* **Organizations**: Users can belong to one organization, and each organization will have its own set of projects and employees.
+* **Inviting Employees**: Admin users can invite employees to join the organization.
+
+  * Invitations will be sent via email and require confirmation.
+* **Employee Management**: Admin users can perform CRUD operations on employee profiles within their organization.
+
+**1.7 Project and User Data Management**
+
+* **Projects**: Projects are tied to an organization, and each organization can have multiple projects based on the subscription plan.
+* **CRUD Operations**: Users, both admin and employees, can create, read, update, and delete projects and employee profiles.
+
+---
+
+### 2. Non-Functional Requirements
+
+**2.1 Security**
+
+* **Encryption**: All sensitive data, including passwords and payment information, should be encrypted.
+* **Role-based Access Control (RBAC)**: Only admin users will have the ability to manage employee profiles, projects, and billing information.
+
+**2.2 Performance**
+
+* **Scalability**: The system should be designed to scale, especially considering the potential growth of organizations and projects within the system.
+* **Load Testing**: The application should undergo load testing to ensure it can handle a large number of simultaneous users and requests.
+
+**2.3 Usability**
+
+* **Responsive Design**: The application should be fully responsive and accessible on different screen sizes.
+* **User Interface**: The user interface will be built using **Bootstrap**, ensuring that it is intuitive, modern, and easy to navigate.
+
+**2.4 Testing**
+
+* **Unit Testing**: The application will use **RSpec** for unit testing.
+* **Integration Testing**: Tests for user workflows, including sign-up, login, project management, and subscription management, should be conducted.
+
+**2.5 Documentation**
+
+* **User Documentation**: Documentation will be provided for end-users explaining how to manage their profiles, projects, and subscriptions.
+* **API Documentation**: If applicable, API documentation should be provided for any integrations, especially with the Stripe API.
+
+---
+
+### 3. Technical Requirements
+
+**3.1 Backend**
+
+* **Ruby on Rails 8**: The backend will be built using the **Ruby on Rails 8** framework.
+* **ActasTenant Gem**: This gem will be used to implement multi-tenancy.
+* **Devise Gem**: User authentication will be managed using the **Devise** gem.
+* **Stripe Gem**: The **Stripe gem** will be integrated for payment handling.
+
+**3.2 Frontend**
+
+* **Bootstrap**: The frontend will be styled using **Bootstrap** via CDN to ensure consistent and modern design.
+* **Responsive Design**: The application must be fully responsive, catering to all devices and screen sizes.
+
+**3.3 Database**
+
+* **SQLite3**: SQLite3 will be used as the relational database for storing user and project data.
+
+---
+
+### 4. User Stories
+
+**4.1 As an Admin User:**
+
+* I can create multiple projects.
+* I can invite employees to join my organization.
+* I can manage employee profiles.
+* I can upgrade and downgrade my organization’s subscription.
+* I can view payment details and manage billing.
+
+**4.2 As an Employee:**
+
+* I can view the projects assigned to my organization.
+* I can upload files and images to projects.
+* I can update my own profile information.
+
+**4.3 As a New User:**
+
+* I can register by accepting an invitation from an admin user.
+* I can confirm my email to activate my account.
+
+---
+
+### 5. Milestones
+
+**5.1 Initial Milestone: Setup and Core Functionality**
+
+* Set up Rails 8 environment.
+* Implement multi-tenancy with the ActasTenant gem.
+* Implement user authentication with Devise.
+* Design and integrate the initial Bootstrap-based UI.
+
+**5.2 Mid-Milestone: Subscription and Payments**
+
+* Integrate Stripe for subscription management.
+* Implement free and paid plans with the appropriate restrictions.
+* Implement user upgrade/downgrade functionality.
+
+**5.3 Final Milestone: Project and Employee Management**
+
+* Complete project management features (CRUD for projects).
+* Implement file and image uploads for projects.
+* Complete the employee management feature (CRUD for employees).
+
+**5.4 Final Testing and Deployment**
+
+* Perform final testing on the entire system.
+* Deploy the application to a production environment.
+
+---
+
+### 6. Dependencies
+
+* **ActasTenant**: Multi-tenancy gem for Rails.
+* **Devise**: User authentication gem.
+* **Stripe**: Payment gateway integration.
+* **Bootstrap**: Frontend framework.
+* **MailCatcher**: Simulated email delivery for testing.
+* **RSpec**: For testing.
+
+---
+
+### 7. Future Enhancements
+
+* **Analytics**: Adding analytics for project and employee performance.
+* **Collaboration Tools**: Introduce collaboration features like task assignments, commenting, etc.
+* **Mobile App**: Development of a mobile version of the application.
+
+---
+
+### 8. Glossary
+
+* **Tenant**: An organization that subscribes to the service.
+* **Admin User**: A user with the ability to manage the organization and invite employees.
+* **Employee User**: A user associated with an organization who participates in projects.
+* **Project**: A collection of tasks, files, and collaborators for a specific goal within an organization.
+* **Stripe**: Payment processing service used for handling subscriptions.
+
+---
+
+This document provides the foundational structure for developing the Project Management SaaS application.

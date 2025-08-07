@@ -1,0 +1,138 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ *
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
+ *
+ * Consider organizing styles into separate files for maintainability.
+ */
+
+/* Custom styles for SaasProjectApp */
+
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 100px 0;
+  text-align: center;
+}
+
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.hero-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.pricing-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 30px;
+}
+
+.pricing-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.pricing-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px 15px 0 0;
+}
+
+.pricing-body {
+  padding: 40px 30px;
+}
+
+.price {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.price-currency {
+  font-size: 1.5rem;
+  vertical-align: top;
+}
+
+.price-period {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0;
+}
+
+.feature-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.feature-list li:last-child {
+  border-bottom: none;
+}
+
+.feature-list li i {
+  color: #28a745;
+  margin-right: 10px;
+}
+
+.btn-pricing {
+  padding: 15px 40px;
+  font-weight: bold;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.premium-card .pricing-header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.premium-badge {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: #ff6b6b;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 60px 0;
+  }
+  
+  .price {
+    font-size: 2.5rem;
+  }
+}

@@ -1,0 +1,157 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Organization Settings</h4>
+          <%= link_to "Edit", edit_organization_path, class: "btn btn-outline-primary" %>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <h5><%= @organization.name %></h5>
+              <% if @organization.description.present? %>
+                <p class="text-muted"><%= @organization.description %></p>
+              <% else %>
+                <p class="text-muted">No description provided.</p>
+              <% end %>
+              
+              <hr>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>Subscription Details</h6>
+                  <div class="mb-2">
+                    <strong>Plan:</strong> 
+                    <span class="badge bg-primary">
+                      <%= @organization.subscription_plan&.titleize || 'Free' %>
+                    </span>
+                  </div>
+                  <div class="mb-2">
+                    <strong>Status:</strong> 
+                    <span class="badge bg-<%= @organization.subscription_status == 'active' ? 'success' : 'warning' %>">
+                      <%= @organization.subscription_status&.titleize || 'Free' %>
+                    </span>
+                  </div>
+                  <div class="mb-2">
+                    <strong>Project Limit:</strong> 
+                    <% if @organization.project_limit %>
+                      <%= @organization.project_limit %> projects
+                    <% else %>
+                      Unlimited
+                    <% end %>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <h6>Usage Statistics</h6>
+                  <div class="mb-2">
+                    <strong>Total Projects:</strong> <%= @organization.projects.count %>
+                  </div>
+                  <div class="mb-2">
+                    <strong>Team Members:</strong> <%= @organization.users.count %>
+                  </div>
+                  <div class="mb-2">
+                    <strong>Active Projects:</strong> <%= @organization.projects.where(status: 'active').count %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Activity -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">Recent Activity</h5>
+        </div>
+        <div class="card-body">
+          <% recent_projects = @organization.projects.order(created_at: :desc).limit(5) %>
+          <% if recent_projects.any? %>
+            <div class="list-group list-group-flush">
+              <% recent_projects.each do |project| %>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong><%= project.name %></strong>
+                    <small class="text-muted d-block">
+                      Created <%= time_ago_in_words(project.created_at) %> ago
+                    </small>
+                  </div>
+                  <span class="badge bg-<%= project.status == 'active' ? 'success' : 'secondary' %>">
+                    <%= project.status.titleize %>
+                  </span>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-muted">No projects created yet.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-md-4">
+      <!-- Quick Stats -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">Organization Overview</h6>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-6">
+              <div class="border-end">
+                <h4 class="text-primary"><%= @organization.projects.count %></h4>
+                <small class="text-muted">Projects</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <h4 class="text-success"><%= @organization.users.count %></h4>
+              <small class="text-muted">Members</small>
+            </div>
+          </div>
+          
+          <hr>
+          
+          <div class="small">
+            <div class="d-flex justify-content-between mb-2">
+              <span>Created:</span>
+              <span><%= @organization.created_at.strftime("%b %d, %Y") %></span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Last Updated:</span>
+              <span><%= @organization.updated_at.strftime("%b %d, %Y") %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">Quick Actions</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <%= link_to edit_organization_path, class: "btn btn-outline-primary" do %>
+              <i class="bi bi-pencil me-2"></i>Edit Organization
+            <% end %>
+            
+            <%= link_to subscription_path, class: "btn btn-outline-info" do %>
+              <i class="bi bi-credit-card me-2"></i>Billing & Plans
+            <% end %>
+            
+            <%= link_to users_path, class: "btn btn-outline-success" do %>
+              <i class="bi bi-people me-2"></i>Manage Team
+            <% end %>
+            
+            <%= link_to projects_path, class: "btn btn-outline-secondary" do %>
+              <i class="bi bi-folder me-2"></i>View Projects
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
